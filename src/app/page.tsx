@@ -12,16 +12,13 @@ interface Todo {
 type Filter = "all" | "active" | "completed";
 
 export default function Home() {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    if (typeof window === "undefined") return [];
+    const stored = localStorage.getItem("todos");
+    return stored ? (JSON.parse(stored) as Todo[]) : [];
+  });
   const [input, setInput] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("todos");
-      if (stored) setTodos(JSON.parse(stored));
-    }
-  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
